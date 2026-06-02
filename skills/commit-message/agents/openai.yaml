@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit Message"
+  short_description: "Generate compliant commit messages."
+  default_prompt: "Write a commit message that follows the configured project convention."
