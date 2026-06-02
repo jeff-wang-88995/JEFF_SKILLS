@@ -1,4 +1,0 @@
-interface:
-  display_name: "Omniverse Live API 驗證"
-  short_description: "用 Kit logs live 驗證 Omniverse WebRTC custom API。"
-  default_prompt: "請 live 驗證一條 Omniverse WebRTC custom API：啟動本機 Kit streaming 與 web app，觸發前端事件，並整理 Kit log 證據。"
