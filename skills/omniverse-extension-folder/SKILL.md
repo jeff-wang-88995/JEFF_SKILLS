@@ -1,10 +1,18 @@
 ---
 name: omniverse-extension-folder
-description: Generate minimal Omniverse Kit Extension folder structures in the omniverse-ntsac workspace. Use when the user asks to create or scaffold an Extension folder and wants the layout to follow AGENTS.md and local examples such as ennowell_draw_heatmap_adapter.
+description: Generate minimal Omniverse Kit Extension folder structures in the omniverse-ntsac workspace. Use when the user asks to create or scaffold an Extension folder and wants the layout to follow local Omniverse extension conventions, Composer UI panel rules, and examples such as ennowell_alarm_system_ui or ennowell_draw_heatmap_adapter.
 ---
 # Omniverse Extension 資料夾格式
 
-使用這個 Skill 時，先遵守 workspace 的 `AGENTS.md`。在 `D:\Work\omniverse-ntsac` 中，回答與說明使用繁體中文。
+用來產生或整理 Omniverse Kit Extension 資料夾。內容只描述 Extension 結構、命名、依賴與 Composer UI 面板相關規則。
+
+## 專案規則
+
+- 可以參照 `ennowell_alarm_system_ui` 的資料夾格式，特別是 UI 面板 extension。
+- 若製作 UI 面板，畫面顯示文字請使用英文，因為 Omni Composer 內不支援顯示中文。
+- 如果是單純給 Composer 使用的 UI / 測試面板，不需要添加依賴至 USD Viewer Streaming。
+- Python 主檔不要命名為 `extension.py`，除非使用者明確要求。
+- Python 檔內註解可以使用繁體中文；若能用中文說清楚，優先使用中文註解。
 
 ## 參考格式
 
@@ -14,7 +22,7 @@ description: Generate minimal Omniverse Kit Extension folder structures in the o
 kit-app-template/source/extensions/ennowell_draw_heatmap_adapter
 ```
 
-如果使用者要 UI 測試面板，也可以參考：
+如果使用者要 UI 測試面板，優先參考：
 
 ```text
 kit-app-template/source/exts/ennowell_alarm_system_ui
@@ -36,7 +44,7 @@ kit-app-template/source/exts/<extension_name>
 
 若使用者沒有指定位置：
 
-- 一般 extension 預設放 `kit-app-template/source/extensions`
+- 一般 adapter / provider / runtime extension 預設放 `kit-app-template/source/extensions`
 - UI / 測試面板 extension 預設放 `kit-app-template/source/exts`
 
 ## 基本資料夾格式
@@ -98,6 +106,8 @@ include = ["*.py"]
 name = "<python_module>"
 ```
 
+若 extension 不是 UI 面板，依實際需求調整 dependencies，不要為了模板固定加入不需要的依賴。
+
 若有圖示：
 
 ```toml
@@ -154,3 +164,6 @@ repo_build.prebuild_link {
 - `premake5.lua` link 的 module folder 存在。
 - `__init__.py` import 的主檔存在。
 - 主 Python 檔不能是 `extension.py`，除非使用者指定。
+- UI 面板顯示文字使用英文。
+- Composer-only UI / 測試面板沒有被加入 USD Viewer Streaming 依賴。
+- Extension 相關檔案結構、命名與依賴符合本 Skill 規則。

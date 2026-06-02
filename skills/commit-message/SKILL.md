@@ -9,11 +9,18 @@ description: 依照 OneDev 與 Conventional Commits 規範產生、改善、驗�
 
 1. 在可讀取 repository 時，先檢查變更內容再撰寫訊息：
    - 優先使用 `git diff --cached --stat`、`git diff --cached --name-status`，必要時再看重點 staged diff。
+   - 同時使用 `git diff --stat`、`git diff --name-status`、`git status --short` 檢查 unstaged / untracked 檔案。
+   - 判斷 unstaged / untracked 是否有與 staged commit 主題相關、可能漏 staged 的檔案。
+   - 若發現疑似漏 staged，先在回覆中列出，不要自動 stage，除非使用者明確要求。
    - 若沒有 staged 內容，改看 `git diff --stat`，並在回覆中清楚說明建議是根據 unstaged changes。
    - 除非使用者明確要求，不要 stage、commit 或修改檔案。
 2. 從變更內容判斷主要 `<type>` 與可用的 `<scope>`。
-3. 先寫符合規範的 title；只有在需要補充 what、why、影響或測試方式時才加入 body。
-4. 輸出應可直接作為 commit message 使用。通常提供一個推薦版本即可；必要時可附短版。
+3. 判斷這次修改的目的：
+   - 優先使用使用者明確描述的目的。
+   - 其次從 staged diff 的功能變化、錯誤修正、流程調整推導。
+   - 若目的無法可靠判斷，不要猜測；在回覆中標註「目的需確認」或省略目的句。
+4. 先寫符合規範的 title；只有在需要補充 what、why、影響或測試方式時才加入 body。
+5. 輸出應可直接作為 commit message 使用。通常提供一個推薦版本即可；必要時可附短版。
 
 ## 必要格式
 
@@ -92,6 +99,7 @@ BREAKING CHANGE: Device queries now require a tenant ID.
 Title 無法充分說明脈絡時才加入 body。Body 可包含：
 
 - 改了什麼。
+- 這次修改的目的；若無法從 staged diff 或使用者描述可靠判斷，不要自行猜測。
 - 為什麼要改。
 - 對使用者、系統或部署的影響。
 - 如何測試或確認。
@@ -123,4 +131,6 @@ feat(tcvgh): 新增建築 Highlight Web 事件
 - Title 沒有句號結尾。
 - Title、body、footer 之間有空白行。
 - Body/footer 每行不超過 72 字元。
+- 已檢查 staged / unstaged / untracked，並提醒可能漏 staged 的相關檔案。
+- Commit message 有說明此次修改目的；若目的不明，已明確標註需確認或避免猜測。
 - Commit message 符合實際 staged changes；若根據 unstaged 或使用者描述產生，需清楚說明。
