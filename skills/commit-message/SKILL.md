@@ -96,21 +96,49 @@ BREAKING CHANGE: Device queries now require a tenant ID.
 
 ## Body 建議
 
-Title 無法充分說明脈絡時才加入 body。Body 可包含：
+Title 無法充分說明脈絡時才加入 body。需要 body 時，預設使用以下分段格式，讓目的、變更與測試清楚分離：
 
+```text
+<type>(<scope>): <briefing>
+
+目的:
+- 說明這次修改要解決的問題或降低的維護成本。
+- 若目的無法從使用者描述或 diff 可靠判斷，標註「目的需確認」，不要自行猜測。
+
+變更:
+- 說明主要行為、資料流程、介面或結構調整。
+- 只寫和此次 commit 主題直接相關的變更。
+
+測試:
+- 列出已執行的檢查、測試或人工驗證。
+- 若未執行測試，明確寫「未執行測試」。
+```
+
+Body 可包含：
+
+- 這次修改的目的與原因。
 - 改了什麼。
-- 這次修改的目的；若無法從 staged diff 或使用者描述可靠判斷，不要自行猜測。
-- 為什麼要改。
 - 對使用者、系統或部署的影響。
 - 如何測試或確認。
 
 範例：
 
 ```text
-feat(tcvgh): 新增建築 Highlight Web 事件
+feat(elevator): 改用 Area API 處理電梯樓層
 
-- 新增建築 Overlay、Outline 與組合 Highlight 效果事件。
-- 更新 WebGL 測試模板，讓瀏覽器測試面板可以直接觸發效果。
+目的:
+- 讓電梯 Web 與 Composer UI 使用統一的 Area metadata，
+  避免前端與測試工具各自硬編樓層清單或自行組 areaName。
+
+變更:
+- 電梯 3D 頁改由 AreaDataForWeb 建立樓層到 areaName 的對應。
+- 電梯 2D 頁改由 Area API 產生樓層軸，移除 33F/B4F 硬編範圍。
+- 電梯 Composer UI 改用 get_area_data 取得 Area 清單。
+- unsupported floor 不做 clamp、不送 3D 移動，只記 warning。
+
+測試:
+- python -m py_compile elevator_system_ui.py
+- npm.cmd run type-check 仍受既有 unrelated 型別錯誤影響
 ```
 
 ## 輸出偏好
@@ -118,7 +146,7 @@ feat(tcvgh): 新增建築 Highlight Web 事件
 - 使用者未指定語言時，優先輸出中文 commit message。
 - 保留 commit type 關鍵字為英文，例如 `feat`、`fix`、`build`。
 - Scope 可依專案慣例使用英文或既有名稱。
-- Commit body 預設使用條列式，讓變更內容更容易掃讀；若只有一句話即可說清楚，才使用段落式。
+- Commit body 預設使用「目的 / 變更 / 測試」分段；只有極小修改才可省略 body 或改用短段落。
 - 若使用者要求英文版，再輸出英文 commit message。
 
 ## 檢查清單
@@ -131,6 +159,7 @@ feat(tcvgh): 新增建築 Highlight Web 事件
 - Title 沒有句號結尾。
 - Title、body、footer 之間有空白行。
 - Body/footer 每行不超過 72 字元。
+- 需要 body 時，已使用「目的 / 變更 / 測試」分段，且目的沒有被省略。
 - 已檢查 staged / unstaged / untracked，並提醒可能漏 staged 的相關檔案。
 - Commit message 有說明此次修改目的；若目的不明，已明確標註需確認或避免猜測。
 - Commit message 符合實際 staged changes；若根據 unstaged 或使用者描述產生，需清楚說明。
