@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill 製作本地規則"
+  short_description: "補充官方 skill-creator 的本地製作規範。"
+  default_prompt: "請依照官方 skill-creator 與我的本地規則建立或更新 skill。"

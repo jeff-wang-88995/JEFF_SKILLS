@@ -1,0 +1,4 @@
+interface:
+  display_name: "修改 Submodules"
+  short_description: "檢查、修正與登記 Git submodule，包含既有內層 repo、空目錄、錯誤 .gitmodules 與 Windows fallback。"
+  default_prompt: "請協助我檢查並修正這個 repo 的 Git submodule 設定與登記狀態。"
