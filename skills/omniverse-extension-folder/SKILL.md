@@ -1,10 +1,10 @@
 ---
 name: omniverse-extension-folder
-description: Generate minimal Omniverse Kit Extension folder structures in the omniverse-ntsac workspace. Use when the user asks to create or scaffold an Extension folder and wants the layout to follow local Omniverse extension conventions, Composer UI panel rules, and examples such as ennowell_alarm_system_ui or ennowell_draw_heatmap_adapter.
+description: 在 omniverse-ntsac workspace 建立或整理 Omniverse Kit Extension 的資料夾、命名、依賴與標準 Extension Manager 文件結構。當使用者要求建立或 scaffold Extension、整理既有 Extension、補齊中英文 Overview／Changelog、設定 Composer 文件預覽，或仿照 ennowell_alarm_system_ui、ennowell_draw_heatmap_adapter 等本地 Extension 格式時使用。
 ---
 # Omniverse Extension 資料夾格式
 
-用來產生或整理 Omniverse Kit Extension 資料夾。內容只描述 Extension 結構、命名、依賴與 Composer UI 面板相關規則。
+用來產生或整理 Omniverse Kit Extension 資料夾。內容只描述 Extension 結構、命名、依賴、標準 Extension Manager 文件與 Composer UI 面板相關規則。
 
 ## 專案規則
 
@@ -13,6 +13,14 @@ description: Generate minimal Omniverse Kit Extension folder structures in the o
 - 如果是單純給 Composer 使用的 UI / 測試面板，不需要添加依賴至 USD Viewer Streaming。
 - Python 主檔不要命名為 `extension.py`，除非使用者明確要求。
 - Python 檔內註解可以使用繁體中文；若能用中文說清楚，優先使用中文註解。
+
+## 建立前確認
+
+- 每次建立新的 Extension 時，先詢問使用者：「這個 Extension 是否需要建立 Extension Manager 的 Overview 與 Changelog？若需要，會同時產生英文預覽版與繁體中文版。」
+- 若使用者在原始需求已明確要求或拒絕文件，直接依需求執行，不要重複詢問。
+- 只在建立新 Extension 時詢問；修改既有 Extension 時不要每次詢問。使用者已要求替既有 Extension 建立或整理 Overview／Changelog 時，直接依需求執行。若本次修改涉及 Extension Manager 顯示且既有 Extension 缺少文件，可以提醒一次。
+- 使用者需要文件時，依「中英文 Extension Manager 文件」建立四份文件並完成設定。
+- 使用者不需要文件時，維持最小 Extension 結構，不要建立 `docs/`。
 
 ## 參考格式
 
@@ -70,7 +78,27 @@ kit-app-template/source/exts/<extension_name>
     preview.png
 ```
 
-不要自動加入 docs、README、CHANGELOG、測試資料夾或其他多餘檔案，除非使用者明確要求。
+依「建立前確認」的回答決定是否加入 `docs/`。不要自行加入 README、測試資料夾或其他多餘檔案。
+
+## 中英文 Extension Manager 文件
+
+使用者需要 Overview 與 Changelog 時，建立：
+
+```text
+<extension_name>/
+  docs/
+    Overview.md
+    CHANGELOG.md
+    Overview.zh-TW.md
+    CHANGELOG.zh-TW.md
+```
+
+- `Overview.md` 與 `CHANGELOG.md` 是 Composer 預覽使用的英文版。使用純英文與 ASCII 字元，避免 Composer 顯示 `????`。
+- `Overview.zh-TW.md` 與 `CHANGELOG.zh-TW.md` 是完整繁體中文版，不要只提供簡化摘要。
+- 中英文 Changelog 的版本、日期與變更項目保持一致。
+- Overview 至少包含用途、操作流程、UI 控制項、結果欄位、還原或資料安全機制，以及限制與注意事項。
+- Changelog 使用版本分段，並以 Added、Changed、Fixed、Removed 等類別記錄實際變更；中文版使用對應的繁體中文標題。
+- 本 Skill 的標準文件範圍就是上述四份檔案；不要因建立 `docs/` 而自行增加使用者未要求的其他文件。
 
 ## 命名規則
 
@@ -115,6 +143,21 @@ icon = "data/icon.png"
 preview_image = "data/preview.png"
 ```
 
+若有中英文 Extension Manager 文件，在 `[package]` 加入英文預覽路徑，並登錄四份文件：
+
+```toml
+readme = "docs/Overview.md"
+changelog = "docs/CHANGELOG.md"
+
+[documentation]
+pages = [
+    "docs/Overview.md",
+    "docs/CHANGELOG.md",
+    "docs/Overview.zh-TW.md",
+    "docs/CHANGELOG.zh-TW.md",
+]
+```
+
 ## __init__.py 格式
 
 `__init__.py` 只需要從主 Python 檔 import extension class：
@@ -154,12 +197,28 @@ repo_build.prebuild_link {
 }
 ```
 
+有 `docs/` 時，將 `docs` 加入 `repo_build.prebuild_link`，確保打包後包含文件：
+
+```lua
+repo_build.prebuild_link {
+    { "<python_module>", ext.target_dir.."/<python_module>" },
+    { "docs", ext.target_dir.."/docs" },
+}
+```
+
+若同時有 `data/` 與 `docs/`，兩者都要加入 link。
+
 ## 完成檢查
 
 產生資料夾後確認：
 
 - 資料夾格式符合上述結構。
-- 沒有多餘 docs / README / CHANGELOG，除非使用者指定。
+- 已在建立新 Extension 前確認是否需要中英文 Overview 與 Changelog；原始需求已明確指定時沒有重複詢問。
+- 使用者不需要文件時，沒有多餘的 `docs/`、README 或 CHANGELOG。
+- 使用者需要文件時，四份中英文文件都存在，內容互相對應。
+- `extension.toml` 的 `readme` 與 `changelog` 指向英文版，`documentation.pages` 登錄四份文件。
+- 英文 Overview 與 Changelog 只使用英文與 ASCII 字元，繁體中文文件使用 UTF-8 no BOM 與 LF。
+- 有 `docs/` 時，`premake5.lua` 已 link `docs`。
 - `extension.toml` package name 與 python module name 對齊。
 - `premake5.lua` link 的 module folder 存在。
 - `__init__.py` import 的主檔存在。

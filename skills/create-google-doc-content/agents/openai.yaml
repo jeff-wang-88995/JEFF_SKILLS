@@ -1,0 +1,4 @@
+interface:
+  display_name: "建立 Google 文件內容"
+  short_description: "從需求與來源建立完整技術文件，輸出可直接貼入 Google 文件的富格式全文"
+  default_prompt: "使用 $create-google-doc-content 建立新的完整技術文件，保存 Markdown 原稿並輸出可直接貼入 Google 文件的格式。"

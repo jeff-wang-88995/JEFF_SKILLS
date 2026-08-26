@@ -34,6 +34,7 @@ disable-model-invocation: false
 3. 若使用者只說「上 Redmine」，先驗證 `/users/current.json` 是否可通，再決定後續查詢或建單流程。
 4. 若 API 建單失敗，不要直接改掛其他專案；先查失敗原因，再向使用者說明。
 5. 只有在使用者明確同意，或專案配置明顯無法建單時，才可改掛父專案或共享專案。
+6. 使用者提到週次代碼或主旨含有週別格式（例如 `[115W25]`）時，主旨必須保留該週別，並同步寫入 Redmine 自訂欄位 `週次代碼`（custom field id `29`），值只填週別本體（例如 `115W25`）。
 
 ## 最小驗證流程
 
@@ -54,8 +55,9 @@ disable-model-invocation: false
 2. 確認 tracker 是否存在於該專案。
 3. 確認 category 是否為該專案有效類別。
 4. 若專案存在 `issue_custom_fields`，先補齊必要欄位。
-5. 再送出 `POST /issues.json`。
-6. 建立完成後，立即反查 issue 或讀取回傳 id，確認真的建立成功。
+5. 若 issue 屬於特定週次，或主旨含 `[115Wxx]` 這類週別，需同時在 `custom_fields` 寫入 `{ "id": 29, "value": "115Wxx" }`。
+6. 再送出 `POST /issues.json`。
+7. 建立完成後，立即反查 issue 或讀取回傳 id，確認真的建立成功。
 
 送出格式範例：
 
@@ -114,7 +116,7 @@ disable-model-invocation: false
 1. 使用者帳號可由 API key 驗證取得。
 2. `新北二辦統包工程` 可正常建單，但某些 tracker 需補 category 與 `Revision`。
 3. `越南QTSC園區智慧整合系統開發平台` 可正常建單，但需補有效 category。
-4. `橋頭園區數位創新復合樓群統包工程` 目前 API 查得 `trackers` 與 `issue_categories` 為空；若要建單，需先再次驗證專案配置，或由使用者確認是否應改掛其他專案。
+4. `橋頭園區數位創新復合樓群統包工程` 已確認可由 API 查得 tracker 與 issue category，並可正常建單；建單前仍需依 project metadata 選擇有效 tracker/category。
 
 ## 回覆規則
 

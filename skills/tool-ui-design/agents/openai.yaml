@@ -1,0 +1,4 @@
+interface:
+  display_name: "工具 UI 設計與檢查"
+  short_description: "設計、優化並評估工具型介面的資訊層級、操作流程與空間配置"
+  default_prompt: "使用 $tool-ui-design 分析並優化這個工具介面的資訊層級、操作流程與空間配置。"
