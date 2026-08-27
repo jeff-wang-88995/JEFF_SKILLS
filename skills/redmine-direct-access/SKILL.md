@@ -1,6 +1,6 @@
 ---
 name: redmine-direct-access
-description: 直接使用固定的 Redmine base URL 與 API key 查詢、建立、更新、搬移 Redmine issue。當使用者提到「上 Redmine」、「幫我上 Redmine」、「用 Redmine 金鑰」、「直接建 Redmine issue」、「查 Redmine 單號」、「修改 Redmine issue」、「搬移 Redmine issue」時使用。
+description: 直接使用固定的 Redmine base URL，並從 Git 忽略的本機文字檔讀取 API key，以查詢、建立、更新或搬移 Redmine issue。當使用者提到「上 Redmine」、「幫我上 Redmine」、「用 Redmine 金鑰」、「直接建 Redmine issue」、「查 Redmine 單號」、「修改 Redmine issue」、「搬移 Redmine issue」時使用。
 argument-hint: 提供要查詢、建立或修改的 issue 內容；若未提供專案、tracker 或分類，需先查 Redmine metadata 再執行。
 user-invocable: true
 disable-model-invocation: false
@@ -21,11 +21,19 @@ disable-model-invocation: false
 
 ## 固定連線資訊
 
-除非使用者明確要求覆蓋，否則一律先使用以下設定：
+除非使用者明確要求覆蓋，否則一律使用以下設定：
 
 1. Redmine base URL：`https://redmine.int.ennowell.net`
-2. Redmine API key：`41668d7231aafd0aba3e238f8711312de2927ef8`
-3. Header：`X-Redmine-API-Key: 41668d7231aafd0aba3e238f8711312de2927ef8`
+2. API key 來源：相對於本 Skill 目錄的 `.local/redmine-api-key.txt`。
+3. 執行前，先從目前載入的 `SKILL.md` 來源位置取得其所在目錄並設為 `$skillDir`；不可依賴目前工作目錄，也不可寫死絕對路徑。
+4. 使用 PowerShell 讀取：
+   ```powershell
+   $keyPath = Join-Path $skillDir '.local\redmine-api-key.txt'
+   $apiKey = (Get-Content -LiteralPath $keyPath -Raw -Encoding UTF8).Trim()
+   ```
+5. 若本機文字檔不存在或內容為空，停止 API 操作並告知使用者。
+6. 不可將 API key 寫入 Skill、程式碼、命令輸出或 Git 追蹤檔案。
+7. 呼叫 API 時，將讀取到的值放入 `X-Redmine-API-Key` Header。
 
 ## 預設操作原則
 
