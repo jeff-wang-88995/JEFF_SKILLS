@@ -22,6 +22,25 @@ description: 依照 OneDev 與 Conventional Commits 規範產生、改善、驗�
 4. 先寫符合規範的 title；只有在需要補充 what、why、影響或測試方式時才加入 body。
 5. 輸出應可直接作為 commit message 使用。通常提供一個推薦版本即可；必要時可附短版。
 
+## Diff 證據關卡
+
+產生 commit message 前後都必須執行以下檢查，不可只依賴對話記憶或操作歷程：
+
+1. 先確定本次訊息的唯一變更證據來源：
+   - 有 staged changes 時，只以最終 `git diff --cached` 作為提交內容證據。
+   - 沒有 staged changes 時，以目前 `git diff` 作為草稿證據，並明確告知使用者；檔案 staged 後必須重新檢查並產生訊息。
+   - Untracked 檔案只有在已讀取其內容且確認屬於同一提交時，才能納入草稿，並提醒使用者尚未 stage。
+2. 根據最終 diff 建立內部證據對照：將 title 與每一條「變更」敘述對應到具體檔案及 diff hunk。除非使用者要求，無需輸出對照表。
+3. 只有能從最終 diff 直接證明的淨變更，才能寫入 title 或「變更」段落。下列內容不得當成提交內容：
+   - 對話中提過但最終 diff 沒有的修改。
+   - 曾經做過但後來還原的中間狀態。
+   - 僅存在於工具操作歷程、工作筆記或模型記憶的內容。
+4. 「目的」可以引用使用者明確說明，但不得把目的或操作過程改寫成 diff 中不存在的變更。
+5. 「測試」只能列出本次實際執行且有結果的測試；測試不需要出現在 diff，但不得依推測補寫。
+6. 草稿完成後再次讀取對應的 staged 或 unstaged diff：
+   - 若 diff 已改變，重新建立證據對照並重寫訊息。
+   - 若任何敘述找不到直接證據，刪除該敘述或清楚標示為尚未納入提交，不能留在 commit message 內。
+
 ## 必要格式
 
 Commit message 應符合：
@@ -163,3 +182,6 @@ feat(elevator): 改用 Area API 處理電梯樓層
 - 已檢查 staged / unstaged / untracked，並提醒可能漏 staged 的相關檔案。
 - Commit message 有說明此次修改目的；若目的不明，已明確標註需確認或避免猜測。
 - Commit message 符合實際 staged changes；若根據 unstaged 或使用者描述產生，需清楚說明。
+- Title 與每一條「變更」敘述都能對應到最終 diff 的具體檔案及 hunk。
+- 沒有加入已還原的中間狀態、對話記憶或 diff 中不存在的修改。
+- 訊息完成後已重新讀取 diff；若 diff 有變化，已重新產生訊息。
